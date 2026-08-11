@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="docs/assets/social-card.png" alt="Graph Factory — draw the pipeline, get config your harness actually runs" width="820">
+
 # Graph Factory
 
 **Build an AI coding workflow visually. Run it with the coding tool you already use.**
