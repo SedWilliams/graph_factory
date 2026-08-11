@@ -1,0 +1,63 @@
+/*
+ * Theme: midnight
+ *
+ * A near-black variant of the default scheme. It also demonstrates that a
+ * theme may override a derived token from semantic.css when the default
+ * relationship is wrong for it — here the shadows are pushed harder because
+ * the surfaces sit so close to black.
+ *
+ * Activate with: document.documentElement.dataset.theme = 'midnight'
+ */
+
+:root[data-theme='midnight'] {
+  color-scheme: dark;
+
+  --surface-deep: #000000;
+  --surface-base: #08080c;
+  --surface-raised: #101017;
+  --surface-sunken: #050508;
+  --surface-hover: #1c1c26;
+  --surface-active: #272733;
+  --surface-hover-subtle: #16161e;
+
+  --border: #2b2b3a;
+  --border-strong: #43435a;
+  --border-subtle: #1e1e28;
+  --border-input: #383848;
+
+  --text-primary: #e8e6e0;
+  --text-muted: #b6b2a6;
+  --text-faint: #74748a;
+  --text-placeholder: #84848f;
+  --text-strong: #ffffff;
+  --text-on-accent: #08080c;
+  --text-code: #93bde6;
+  --text-code-muted: #93a2c0;
+
+  --accent: #7fa5e8;
+  --accent-strong: #6b8fd0;
+  --accent-soft: #16233a;
+  --accent-surface: #172538;
+  --accent-surface-hover: #1f3a52;
+  --accent-surface-dim: #121a28;
+  --accent-border: #253d5c;
+  --accent-gradient-end: #0e1a2c;
+
+  --success: #93bd66;
+  --success-strong: #86ab5c;
+  --success-surface: #111d18;
+  --success-border: #2f452f;
+  --success-deep: #0a1d16;
+  --warning: #e5c07f;
+  --warning-strong: #d6b273;
+  --danger: #f2606a;
+  --danger-surface: #3d1e1e;
+  --code: #8fd897;
+  --purple: #8a71ad;
+  --teal: #6a9990;
+
+  --shadow-color: #000000;
+  --shadow: 0 12px 36px color-mix(in srgb, var(--shadow-color) 60%, transparent);
+  --shadow-menu: 0 18px 40px color-mix(in srgb, var(--shadow-color) 70%, transparent);
+  --shadow-modal: 0 24px 70px color-mix(in srgb, var(--shadow-color) 80%, transparent);
+}

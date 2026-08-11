@@ -1,0 +1,25 @@
+{
+  "name": "graph-factory",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Edit a graph, get an agentic AI coding system your harness can actually run",
+  "bin": {
+    "graph-factory": "bin/graph-factory.mjs"
+  },
+  "scripts": {
+    "start": "node src/launcher.mjs",
+    "start:server": "node src/server.mjs",
+    "dev": "node --watch src/server.mjs",
+    "check": "node --check bin/graph-factory.mjs && node --check src/launcher.mjs && node --check src/server.mjs && node --check public/app.js",
+    "test": "node --test \"test/*.test.mjs\"",
+    "format": "prettier --write \"src/**/*.mjs\" \"bin/**/*.mjs\" \"test/**/*.mjs\" \"public/**/*.{js,css,html}\" \"*.json\"",
+    "lint": "prettier --check \"src/**/*.mjs\" \"bin/**/*.mjs\" \"test/**/*.mjs\" \"public/**/*.{js,css,html}\" \"*.json\""
+  },
+  "dependencies": {
+    "yaml": "^2.8.1"
+  },
+  "devDependencies": {
+    "prettier": "^3.9.6"
+  }
+}

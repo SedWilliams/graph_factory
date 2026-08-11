@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Graph Factory — design agentic coding systems</title>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="shell">
+      <aside class="rail">
+        <div class="rail-head">
+          <a class="brand" href="#"><strong>Graph Factory</strong><small>Agent systems as graphs</small></a>
+          <button class="icon-btn" id="theme-toggle" type="button" title="Change theme" aria-label="Change theme">
+            <svg viewBox="0 0 256 256" aria-hidden="true">
+              <circle cx="128" cy="128" r="52"></circle>
+              <path d="M128 20v24m0 168v24M20 128h24m168 0h24M52 52l17 17m118 118 17 17M204 52l-17 17M69 187l-17 17"></path>
+            </svg>
+          </button>
+        </div>
+        <div class="rail-actions">
+          <button class="btn" id="new-graph" type="button">New graph</button>
+          <button class="btn ghost" id="import-graph" type="button" title="Import a graph file">Import</button>
+        </div>
+        <div class="rail-list" id="graph-list"></div>
+      </aside>
+
+      <div class="work">
+        <header class="topbar">
+          <button class="icon-btn" id="rail-toggle" type="button" title="Hide the library" aria-label="Hide the library">
+            <svg viewBox="0 0 256 256" aria-hidden="true">
+              <rect x="32" y="48" width="192" height="160" rx="8"></rect>
+              <line x1="96" y1="48" x2="96" y2="208"></line>
+            </svg>
+          </button>
+          <div class="topbar-title"><strong id="graph-title">…</strong><small id="graph-subtitle"></small></div>
+          <button class="status-pill saving" id="status-pill" type="button">Loading</button>
+          <button class="btn ghost" id="open-settings" type="button">Graph</button>
+          <button class="btn ghost" id="open-source" type="button">Source</button>
+          <button class="btn ghost" id="open-export" type="button">Export</button>
+          <button class="btn" id="open-run" type="button">Run</button>
+        </header>
+
+        <div class="editor" id="editor">
+          <nav class="palette" id="palette" aria-label="Node palette"></nav>
+
+          <div class="stage-wrap">
+            <div class="stage" id="stage">
+              <canvas id="canvas"></canvas>
+              <div class="stage-tools">
+                <button class="icon-btn" id="fit-view" type="button" title="Fit to view" aria-label="Fit to view">
+                  <svg viewBox="0 0 256 256" aria-hidden="true">
+                    <path d="M40 96V48h48M216 96V48h-48M40 160v48h48m128-48v48h-48"></path>
+                  </svg>
+                </button>
+                <button class="icon-btn" id="auto-layout" type="button" title="Re-lay out the graph" aria-label="Re-lay out the graph">
+                  <svg viewBox="0 0 256 256" aria-hidden="true">
+                    <circle cx="128" cy="44" r="20"></circle>
+                    <circle cx="56" cy="196" r="20"></circle>
+                    <circle cx="200" cy="196" r="20"></circle>
+                    <path d="M128 64v56m0 0-56 56m56-56 56 56"></path>
+                  </svg>
+                </button>
+              </div>
+              <div class="stage-hint" id="stage-hint"></div>
+              <div class="stage-empty" id="stage-empty" hidden>
+                <strong>Nothing here yet</strong>
+                <span>Pick a node type on the left, then click the canvas to place it.</span>
+              </div>
+            </div>
+            <div class="legend">
+              <span><i class="line" style="background: var(--edge-flow)"></i> flow</span>
+              <span><i class="line" style="background: var(--edge-branch)"></i> branch</span>
+              <span><i class="line" style="background: var(--edge-handoff)"></i> handoff</span>
+              <span><i class="line" style="background: var(--edge-feedback)"></i> feedback</span>
+              <span><i class="line" style="background: var(--edge-uses)"></i> uses</span>
+            </div>
+            <div class="issues" id="issues"></div>
+          </div>
+
+          <aside class="inspector" id="inspector">
+            <div class="inspector-head"><span class="eyebrow" id="inspector-kind">Nothing selected</span></div>
+            <div class="inspector-body" id="inspector-body"></div>
+          </aside>
+        </div>
+      </div>
+    </div>
+
+    <div id="overlay"></div>
+    <div id="toast" role="status"></div>
+    <script src="app.js"></script>
+  </body>
+</html>

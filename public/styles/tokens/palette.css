@@ -1,0 +1,82 @@
+/*
+ * PALETTE — the colourscheme contract.
+ *
+ * This file is the ONLY place a literal colour is allowed to appear in the app
+ * (themes/*.css restate the same names with different literals). Every other
+ * stylesheet must reach for a token, never a hex value.
+ *
+ * A colourscheme is therefore nothing more than an override of the names below.
+ * Three layers stack, weakest to strongest:
+ *
+ *   1. :root here                    the built-in default (dark)
+ *   2. :root[data-theme='<name>']    a bundled theme in themes/
+ *   3. documentElement.style         a user's custom scheme, set from the app:
+ *                                    document.documentElement.style.setProperty('--accent', '#c17fea')
+ *
+ * Because layer 3 is an inline style it always wins, so a user scheme can
+ * override a bundled theme one token at a time without cloning the whole set.
+ *
+ * Anything derived from these — tints, rings, shadows, gradients, graph
+ * colours — lives in semantic.css and follows automatically.
+ */
+
+:root {
+  color-scheme: dark;
+  accent-color: var(--accent);
+
+  /* ---- Type ------------------------------------------------------------ */
+  --font-sans: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: ui-monospace, 'SFMono-Regular', Consolas, monospace;
+
+  /* ---- Surfaces (an elevation ramp, darkest first) --------------------- */
+  --surface-deep: #0d0d12; /* sidebar, wiki rails, page chrome behind everything */
+  --surface-base: #16161d; /* page canvas, inset panels, popovers */
+  --surface-raised: #1f1f28; /* cards, modals, the document pane */
+  --surface-sunken: #12121a; /* inputs and search fields */
+  --surface-hover: #2a2a37; /* hover states, chips, status pills */
+  --surface-active: #363646; /* selected / pressed states */
+  --surface-hover-subtle: #22222d; /* quieter hover used inside the settings nav */
+
+  /* ---- Borders --------------------------------------------------------- */
+  --border: #3e3e52; /* default hairline */
+  --border-strong: #54546d; /* emphasised edges, step dots, graph links */
+  --border-subtle: #2c2c3a; /* faint row dividers */
+  --border-input: #4b4b63; /* form control edges */
+
+  /* ---- Text ------------------------------------------------------------ */
+  --text-primary: #f5f2e9; /* body copy */
+  --text-muted: #dfd8c4; /* secondary copy */
+  --text-faint: #8a8a9e; /* eyebrow labels inside the settings dialog */
+  --text-placeholder: #9a9aa8; /* input placeholders */
+  --text-strong: #ffffff; /* headings; also the basis for white tints */
+  --text-on-accent: #16161d; /* label colour on accent / success buttons */
+  --text-code: #a9cef2; /* inline code and paths */
+  --text-code-muted: #a8b7d6; /* inline code in the settings dialog */
+
+  /* ---- Accent ---------------------------------------------------------- */
+  --accent: #8eaeea; /* primary action colour */
+  --accent-strong: #7e9cd8; /* accent borders and the LLM node colour */
+  --accent-soft: #253852; /* nav counter badge */
+  --accent-surface: #223249; /* tinted accent backgrounds */
+  --accent-surface-hover: #2d4f67;
+  --accent-surface-dim: #1d2432; /* selected coverage card */
+  --accent-border: #36506c;
+  --accent-gradient-end: #16263b; /* far end of the hero gradient */
+
+  /* ---- Status ---------------------------------------------------------- */
+  --success: #a4ca77;
+  --success-strong: #98bb6c; /* observation records, system nodes */
+  --success-surface: #1b2a25; /* wiki answer panel */
+  --success-border: #445c45;
+  --success-deep: #122c23; /* toast */
+  --warning: #f0ce8e;
+  --warning-strong: #e6c384; /* confirmation records, user-owned notes */
+  --danger: #ff7075;
+  --danger-surface: #5a2f2f; /* destructive hover */
+  --code: #a2e5a8; /* monospace evidence blocks */
+  --purple: #957fb8; /* inference records, folder nodes */
+  --teal: #7aa89f; /* workflow nodes and workflow links */
+
+  /* ---- Effects --------------------------------------------------------- */
+  --shadow-color: #000000;
+}

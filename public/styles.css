@@ -1,0 +1,34 @@
+/*
+ * Graph Factory — stylesheet entry point.
+ *
+ * This file is an index, not a stylesheet: it holds no rules of its own. Every rule
+ * lives in a module below, and the import order IS the cascade order — a module
+ * later in the list wins ties against an earlier one.
+ *
+ * Colour never appears as a literal outside styles/tokens/ and styles/themes/. The
+ * canvas cannot inherit CSS, so app.js reads the --node-* and --edge-* tokens off
+ * the computed root style; adding a colour anywhere else breaks theming silently.
+ */
+
+/* Design tokens: the theme contract, then everything derived from it. */
+@import 'styles/tokens/palette.css';
+@import 'styles/tokens/semantic.css';
+
+/* Bundled themes, dormant until documentElement.dataset.theme is set. */
+@import 'styles/themes/light.css';
+@import 'styles/themes/midnight.css';
+
+/* Document defaults. */
+@import 'styles/base/reset.css';
+
+/* Persistent chrome. */
+@import 'styles/layout/shell.css';
+
+/* Reusable pieces. Must precede features/, which refine them. */
+@import 'styles/components/buttons.css';
+@import 'styles/components/forms.css';
+@import 'styles/components/toast.css';
+
+/* Routes. */
+@import 'styles/features/editor.css';
+@import 'styles/features/panels.css';

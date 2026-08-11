@@ -1,0 +1,318 @@
+/*
+ * Overlay panels: export, run, YAML, and graph settings.
+ *
+ * All four are the same drawer, sliding in from the right over the editor. They
+ * cover the inspector rather than displacing it, so the canvas never reflows while
+ * one is open and the node you were looking at stays exactly where it was.
+ */
+
+.scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  background: var(--scrim);
+  backdrop-filter: blur(2px);
+}
+
+.drawer {
+  position: fixed;
+  z-index: 41;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(720px, 92vw);
+  display: flex;
+  flex-direction: column;
+  background: var(--surface-raised);
+  border-left: 1px solid var(--border);
+  box-shadow: var(--shadow-modal);
+}
+.drawer-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+}
+.drawer-head h2 {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  font: 800 18px var(--font-sans);
+  color: var(--text-strong);
+}
+.drawer-head p {
+  margin: 3px 0 0;
+  font: 400 12.5px var(--font-sans);
+  color: var(--text-muted);
+}
+.drawer-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 18px 20px 28px;
+}
+.drawer-foot {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 13px 20px;
+  border-top: 1px solid var(--border);
+  background: var(--surface-base);
+}
+.drawer-foot .spacer {
+  flex: 1;
+}
+
+/* ---- Tabs (compile targets, formats) ------------------------------------ */
+
+.tabs {
+  display: flex;
+  gap: 3px;
+  margin-bottom: 16px;
+  padding: 3px;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  background: var(--surface-base);
+  overflow-x: auto;
+}
+.tabs button {
+  flex: 1 0 auto;
+  border: 0;
+  border-radius: 7px;
+  padding: 8px 13px;
+  background: transparent;
+  color: var(--text-muted);
+  font: 600 12.5px var(--font-sans);
+  cursor: pointer;
+  white-space: nowrap;
+}
+.tabs button.active {
+  background: var(--surface-active);
+  color: var(--text-primary);
+}
+
+.blurb {
+  margin: -6px 0 16px;
+  color: var(--text-muted);
+  font-size: 13px;
+  line-height: 1.55;
+}
+.notes {
+  margin: 0 0 16px;
+  padding: 11px 14px;
+  border: 1px solid var(--border-strong);
+  border-radius: 9px;
+  background: var(--surface-base);
+  color: var(--text-muted);
+  font-size: 12.5px;
+  line-height: 1.6;
+  list-style: none;
+}
+.notes li:before {
+  content: '· ';
+  color: var(--accent);
+}
+
+/* ---- File preview ------------------------------------------------------- */
+
+.file-tree {
+  display: grid;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+.file-entry {
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  background: var(--surface-base);
+  overflow: hidden;
+}
+.file-entry > summary {
+  padding: 9px 13px;
+  cursor: pointer;
+  font: 600 12.5px var(--font-mono);
+  color: var(--text-code);
+  list-style: none;
+}
+.file-entry > summary::-webkit-details-marker {
+  display: none;
+}
+.file-entry > summary:before {
+  content: '▸ ';
+  color: var(--text-faint);
+}
+.file-entry[open] > summary:before {
+  content: '▾ ';
+}
+.file-entry pre {
+  margin: 0;
+  padding: 12px 14px;
+  border-top: 1px solid var(--border-subtle);
+  background: var(--surface-sunken);
+  color: var(--text-primary);
+  font: 12px/1.6 var(--font-mono);
+  white-space: pre-wrap;
+  word-break: break-word;
+  max-height: 380px;
+  overflow-y: auto;
+}
+
+pre.source {
+  margin: 0;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface-sunken);
+  color: var(--text-primary);
+  font: 12.5px/1.65 var(--font-mono);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* ---- Run console -------------------------------------------------------- */
+
+.run-status {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+  padding: 11px 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface-base);
+  font-size: 13px;
+}
+.run-status b {
+  padding: 3px 9px;
+  border-radius: 99px;
+  font: 700 11px var(--font-mono);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+.run-status b.running {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.run-status b.completed {
+  background: var(--success-tint);
+  color: var(--success);
+}
+.run-status b.failed,
+.run-status b.rejected,
+.run-status b.exhausted,
+.run-status b.cancelled {
+  background: var(--danger-surface);
+  color: var(--danger);
+}
+
+.gate-card {
+  margin-bottom: 16px;
+  padding: 14px 16px;
+  border: 1px solid var(--warning-edge);
+  border-radius: 11px;
+  background: var(--warning-tint);
+}
+.gate-card strong {
+  display: block;
+  color: var(--text-primary);
+  font-size: 14px;
+}
+.gate-card p {
+  margin: 6px 0 12px;
+  color: var(--text-muted);
+  font-size: 13px;
+  line-height: 1.55;
+}
+.gate-card .actions {
+  margin: 0;
+}
+
+.journal {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface-sunken);
+  max-height: 46vh;
+  overflow-y: auto;
+  font: 12px/1.6 var(--font-mono);
+}
+.journal div {
+  display: flex;
+  gap: 9px;
+  padding: 4px 13px;
+  border-bottom: 1px solid var(--border-subtle);
+  color: var(--text-muted);
+}
+.journal div:last-child {
+  border-bottom: 0;
+}
+.journal .k {
+  flex: 0 0 128px;
+  color: var(--text-faint);
+}
+.journal .v {
+  flex: 1;
+  min-width: 0;
+  color: var(--text-primary);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.journal .node-start .k {
+  color: var(--accent);
+}
+.journal .node-done .k {
+  color: var(--success);
+}
+.journal .run-error .k,
+.journal .loop-exhausted .k {
+  color: var(--danger);
+}
+.journal .route-taken .k,
+.journal .loop-rewind .k {
+  color: var(--purple);
+}
+.journal .gate-waiting .k {
+  color: var(--warning);
+}
+
+.template-grid {
+  display: grid;
+  gap: 8px;
+}
+.template-card {
+  display: block;
+  width: 100%;
+  padding: 13px 15px;
+  border: 1px solid var(--border);
+  border-radius: 11px;
+  background: var(--surface-base);
+  color: var(--text-primary);
+  text-align: left;
+  cursor: pointer;
+}
+.template-card:hover {
+  border-color: var(--accent);
+}
+.template-card strong {
+  display: block;
+  font-size: 14px;
+}
+.template-card small {
+  display: block;
+  margin-top: 4px;
+  color: var(--text-muted);
+  font-size: 12.5px;
+  line-height: 1.55;
+}
+
+@media (max-width: 1180px) {
+  .editor {
+    grid-template-columns: 60px 1fr 300px;
+  }
+}
+@media (max-width: 900px) {
+  .shell {
+    grid-template-columns: 0 1fr;
+  }
+  .editor {
+    grid-template-columns: 56px 1fr 0;
+  }
+}

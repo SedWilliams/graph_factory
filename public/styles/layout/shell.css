@@ -1,0 +1,231 @@
+/*
+ * The app shell: a fixed library rail, a header, and a work area that fills the
+ * rest of the viewport exactly. The editor is a canvas, so the shell must never
+ * scroll — every pane owns its own overflow, or the canvas ends up sized against a
+ * page that is taller than the window.
+ */
+
+html,
+body {
+  height: 100%;
+  overflow: hidden;
+}
+
+.shell {
+  height: 100vh;
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  grid-template-rows: 100vh;
+}
+.shell.rail-collapsed {
+  grid-template-columns: 0 1fr;
+}
+
+/* ---- Library rail ------------------------------------------------------- */
+
+.rail {
+  grid-column: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--surface-deep);
+  border-right: 1px solid var(--border);
+  overflow: hidden;
+}
+.rail-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 16px 12px;
+}
+.rail-head .brand {
+  flex: 1;
+  min-width: 0;
+  font: 800 15px/1.2 var(--font-sans);
+  color: var(--text-strong);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.rail-head .brand small {
+  display: block;
+  font: 500 11.5px var(--font-sans);
+  letter-spacing: 0.4px;
+  color: var(--text-faint);
+  text-transform: uppercase;
+}
+.rail-actions {
+  display: flex;
+  gap: 6px;
+  padding: 0 16px 12px;
+}
+.rail-actions .btn {
+  flex: 1;
+  padding: 8px 10px;
+  font-size: 12.5px;
+}
+.rail-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 10px 16px;
+}
+.rail-group {
+  padding: 14px 6px 6px;
+  font: 700 11px var(--font-sans);
+  letter-spacing: 0.9px;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+.graph-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 9px;
+  padding: 2px;
+}
+.graph-row:hover {
+  background: var(--surface-hover-subtle);
+}
+.graph-row.active {
+  background: var(--accent-soft);
+}
+.graph-open {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  background: transparent;
+  color: var(--text-primary);
+  text-align: left;
+  padding: 8px 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  font: 600 13px var(--font-sans);
+}
+.graph-open span {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.graph-open small {
+  display: block;
+  margin-top: 2px;
+  font: 500 11.5px var(--font-sans);
+  color: var(--text-faint);
+}
+.graph-row.active .graph-open,
+.graph-row.active .graph-open small {
+  color: var(--text-strong);
+}
+.graph-badge {
+  flex: 0 0 auto;
+  margin-right: 6px;
+  padding: 2px 7px;
+  border-radius: 99px;
+  font: 700 10.5px var(--font-mono);
+}
+.graph-badge.err {
+  background: var(--danger-surface);
+  color: var(--danger);
+}
+.graph-badge.warn {
+  background: var(--warning-tint);
+  color: var(--warning);
+}
+
+/* ---- Header ------------------------------------------------------------- */
+
+.work {
+  grid-column: 2;
+  min-width: 0;
+  display: grid;
+  grid-template-rows: 58px 1fr;
+  overflow: hidden;
+}
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 16px;
+  border-bottom: 1px solid var(--border);
+  background: var(--header-bg);
+  min-width: 0;
+}
+.topbar-title {
+  flex: 1;
+  min-width: 0;
+}
+.topbar-title strong {
+  display: block;
+  font: 700 15px var(--font-sans);
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.topbar-title small {
+  display: block;
+  font: 500 12px var(--font-mono);
+  color: var(--text-faint);
+}
+.topbar .btn {
+  flex: 0 0 auto;
+  padding: 8px 13px;
+  font-size: 12.5px;
+}
+.icon-btn {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface-raised);
+  color: var(--text-muted);
+  cursor: pointer;
+}
+.icon-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.icon-btn svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 18;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.status-pill {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 11px;
+  border-radius: 99px;
+  font: 700 12px var(--font-sans);
+  border: 1px solid transparent;
+  cursor: pointer;
+}
+.status-pill.ok {
+  background: var(--success-tint);
+  border-color: var(--success-edge);
+  color: var(--success);
+}
+.status-pill.warn {
+  background: var(--warning-tint);
+  border-color: var(--warning-edge);
+  color: var(--warning);
+}
+.status-pill.err {
+  background: var(--danger-surface);
+  border-color: var(--danger-edge);
+  color: var(--danger);
+}
+.status-pill.saving {
+  background: var(--surface-hover);
+  border-color: var(--border);
+  color: var(--text-muted);
+}

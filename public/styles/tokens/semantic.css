@@ -1,0 +1,71 @@
+/*
+ * SEMANTIC TOKENS — everything derived from palette.css.
+ *
+ * No literal colours here either: each value is a mix or a composition of a
+ * palette token, so overriding a single palette entry re-tints the whole app.
+ * A theme may still override any of these directly when a derived value needs
+ * a different relationship (see themes/midnight.css).
+ */
+
+:root {
+  /* ---- Neutral tints -------------------------------------------------
+   * Derived from --text-strong so they invert correctly: a white overlay on
+   * a dark scheme, a black overlay on a light one. */
+  --tint-faint: color-mix(in srgb, var(--text-strong) 4%, transparent);
+  --tint-soft: color-mix(in srgb, var(--text-strong) 10%, transparent);
+  --tint-strong: color-mix(in srgb, var(--text-strong) 12%, transparent);
+
+  /* ---- Translucent status edges and halos ---------------------------- */
+  --accent-ring-soft: color-mix(in srgb, var(--accent) 20%, transparent);
+  --accent-ring: color-mix(in srgb, var(--accent) 22%, transparent);
+  --accent-ring-strong: color-mix(in srgb, var(--accent) 25%, transparent);
+  --accent-edge: color-mix(in srgb, var(--accent) 35%, transparent);
+  --success-tint: color-mix(in srgb, var(--success) 15%, transparent);
+  --success-ring: color-mix(in srgb, var(--success) 25%, transparent);
+  --success-edge: color-mix(in srgb, var(--success) 35%, transparent);
+  --warning-tint: color-mix(in srgb, var(--warning) 15%, transparent);
+  --warning-edge: color-mix(in srgb, var(--warning) 35%, transparent);
+  --danger-edge: color-mix(in srgb, var(--danger) 30%, transparent);
+
+  /* ---- Layered chrome ------------------------------------------------- */
+  --header-bg: color-mix(in srgb, var(--surface-raised) 95%, transparent);
+  --scrim: color-mix(in srgb, var(--surface-deep) 72%, transparent);
+  --scrim-strong: color-mix(in srgb, var(--surface-deep) 87%, transparent);
+
+  --shadow: 0 12px 36px color-mix(in srgb, var(--shadow-color) 35%, transparent);
+  --shadow-menu: 0 18px 40px color-mix(in srgb, var(--shadow-color) 45%, transparent);
+  --shadow-modal: 0 24px 70px color-mix(in srgb, var(--shadow-color) 55%, transparent);
+  --focus-ring: 0 0 0 3px var(--accent-ring);
+
+  /* ---- Composed backgrounds ------------------------------------------- */
+  --hero-gradient: linear-gradient(135deg, var(--accent-surface), var(--accent-gradient-end));
+  --graph-stage-gradient: radial-gradient(circle at 50% 42%, var(--surface-raised), var(--surface-base) 72%);
+
+  /* ---- Graph canvas ---------------------------------------------------
+   * Painted by public/app.js, which reads these off the computed root style
+   * so the canvas re-themes with the rest of the app. One token per node type
+   * and one per edge type: the canvas legend and the CSS legend then cannot
+   * drift apart, because both read the same name. */
+  --node-start: var(--success-strong);
+  --node-agent: var(--accent-strong);
+  --node-tool: var(--teal);
+  --node-gate: var(--warning-strong);
+  --node-router: var(--purple);
+  --node-parallel: var(--code);
+  --node-loop: var(--warning);
+  --node-end: var(--text-muted);
+  --node-outline: var(--text-primary);
+  --node-selected: var(--accent);
+  --node-error: var(--danger);
+  --node-label: var(--text-primary);
+  --node-sublabel: var(--text-muted);
+
+  --edge-flow: var(--border-strong);
+  --edge-branch: var(--warning);
+  --edge-handoff: var(--accent-strong);
+  --edge-feedback: var(--purple);
+  --edge-uses: var(--teal);
+  --edge-ghost: var(--accent);
+
+  --canvas-grid: color-mix(in srgb, var(--border-subtle) 70%, transparent);
+}

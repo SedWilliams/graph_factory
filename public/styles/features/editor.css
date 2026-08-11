@@ -1,0 +1,359 @@
+/*
+ * The editor: palette | canvas | inspector, with an issues strip beneath.
+ *
+ * The canvas is the only element allowed to own the leftover space, and it is sized
+ * from its parent's box rather than from content — a canvas has no intrinsic size,
+ * so anything else here that grows would push it off screen instead of shrinking it.
+ */
+
+.editor {
+  display: grid;
+  grid-template-columns: 68px 1fr 340px;
+  min-height: 0;
+  overflow: hidden;
+}
+.editor.inspector-hidden {
+  grid-template-columns: 68px 1fr 0;
+}
+
+/* ---- Palette ------------------------------------------------------------ */
+
+.palette {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px 8px;
+  border-right: 1px solid var(--border);
+  background: var(--surface-deep);
+  overflow-y: auto;
+}
+.palette-label {
+  padding: 2px 0 6px;
+  text-align: center;
+  font: 700 9.5px var(--font-sans);
+  letter-spacing: 0.7px;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+.palette button {
+  display: grid;
+  justify-items: center;
+  gap: 3px;
+  padding: 8px 2px;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  font: 600 10px var(--font-sans);
+}
+.palette button:hover {
+  background: var(--surface-hover-subtle);
+  color: var(--text-primary);
+}
+.palette button.active {
+  border-color: var(--accent-edge);
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.palette .dot {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+}
+.palette .divider {
+  height: 1px;
+  margin: 8px 4px;
+  background: var(--border-subtle);
+}
+
+/* ---- Canvas ------------------------------------------------------------- */
+
+.stage-wrap {
+  position: relative;
+  min-width: 0;
+  display: grid;
+  grid-template-rows: 1fr auto;
+  overflow: hidden;
+}
+.stage {
+  position: relative;
+  min-height: 0;
+  overflow: hidden;
+  background: var(--surface-base);
+}
+.stage canvas {
+  display: block;
+  touch-action: none;
+}
+.stage-empty {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 8px;
+  padding: 24px;
+  text-align: center;
+  color: var(--text-muted);
+  pointer-events: none;
+}
+.stage-empty strong {
+  font: 800 19px var(--font-sans);
+  color: var(--text-primary);
+}
+
+.stage-tools {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: flex;
+  gap: 6px;
+  z-index: 2;
+}
+.stage-hint {
+  position: absolute;
+  left: 12px;
+  bottom: 12px;
+  z-index: 2;
+  padding: 6px 11px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--scrim);
+  backdrop-filter: blur(6px);
+  color: var(--text-muted);
+  font-size: 12px;
+  pointer-events: none;
+}
+.stage-hint b {
+  color: var(--accent);
+}
+
+/* ---- Issues strip ------------------------------------------------------- */
+
+.issues {
+  max-height: 148px;
+  overflow-y: auto;
+  border-top: 1px solid var(--border);
+  background: var(--surface-deep);
+}
+.issues:empty {
+  display: none;
+}
+.issue {
+  display: flex;
+  align-items: baseline;
+  gap: 9px;
+  width: 100%;
+  padding: 7px 14px;
+  border: 0;
+  border-bottom: 1px solid var(--border-subtle);
+  background: transparent;
+  color: var(--text-muted);
+  text-align: left;
+  font: 13px/1.45 var(--font-sans);
+  cursor: pointer;
+}
+.issue:hover {
+  background: var(--surface-hover-subtle);
+  color: var(--text-primary);
+}
+.issue b {
+  flex: 0 0 auto;
+  padding: 1px 7px;
+  border-radius: 5px;
+  font: 700 10px var(--font-mono);
+  letter-spacing: 0.4px;
+}
+.issue.error b {
+  background: var(--danger-surface);
+  color: var(--danger);
+}
+.issue.warning b {
+  background: var(--warning-tint);
+  color: var(--warning);
+}
+.issue code {
+  color: var(--text-faint);
+  font: 11.5px var(--font-mono);
+}
+
+/* ---- Inspector ---------------------------------------------------------- */
+
+.inspector {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  border-left: 1px solid var(--border);
+  background: var(--surface-raised);
+  overflow: hidden;
+}
+.inspector-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 13px 16px;
+  border-bottom: 1px solid var(--border);
+}
+.inspector-head .eyebrow {
+  flex: 1;
+  min-width: 0;
+  font-size: 11.5px;
+  letter-spacing: 0.8px;
+  color: var(--accent);
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.inspector-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+}
+.inspector-empty {
+  display: grid;
+  gap: 8px;
+  padding: 28px 8px;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 13px;
+}
+.inspector .field {
+  margin-bottom: 14px;
+}
+.inspector label {
+  font-size: 12.5px;
+  margin-bottom: 5px;
+}
+.inspector input,
+.inspector select,
+.inspector textarea {
+  padding: 8px 10px;
+  border-radius: 8px;
+  font-size: 13px;
+}
+.inspector textarea {
+  min-height: 108px;
+  font: 12.5px/1.55 var(--font-mono);
+  resize: vertical;
+}
+.inspector textarea.tall {
+  min-height: 210px;
+}
+.inspector .row2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.inspector .hint {
+  margin: -8px 0 14px;
+  color: var(--text-faint);
+  font-size: 11.5px;
+  line-height: 1.5;
+}
+.inspector .danger-zone {
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border-subtle);
+}
+
+/* Tool allow-list: a checkbox grid rather than a text field, because a typo in a
+   tool name fails silently inside the harness. */
+.tool-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px 10px;
+}
+.tool-grid label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: 0;
+  padding: 3px 0;
+  font: 500 12.5px var(--font-mono);
+  color: var(--text-muted);
+  cursor: pointer;
+}
+.tool-grid input {
+  width: auto;
+  margin: 0;
+  accent-color: var(--accent);
+}
+
+.chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 9px;
+  border: 1px solid var(--border);
+  border-radius: 99px;
+  background: var(--surface-base);
+  color: var(--text-muted);
+  font: 600 11.5px var(--font-mono);
+}
+.chip button {
+  border: 0;
+  background: transparent;
+  color: var(--text-faint);
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+}
+.chip button:hover {
+  color: var(--danger);
+}
+
+.input-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 6px;
+  align-items: start;
+  margin-bottom: 8px;
+  padding: 10px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 9px;
+  background: var(--surface-base);
+}
+.input-row .row2 {
+  grid-column: 1;
+}
+.input-row .field {
+  margin-bottom: 8px;
+}
+.input-row .field:last-child {
+  margin-bottom: 0;
+}
+
+/* ---- Legend ------------------------------------------------------------- */
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 8px 14px;
+  border-top: 1px solid var(--border);
+  background: var(--surface-deep);
+  font-size: 11.5px;
+  color: var(--text-muted);
+}
+.legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.legend i {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--edge-flow);
+}
+.legend i.line {
+  width: 16px;
+  height: 2px;
+  border-radius: 0;
+}

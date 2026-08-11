@@ -1,0 +1,45 @@
+/* Reset, document defaults, and accessibility helpers. */
+
+* {
+  box-sizing: border-box;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+*::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
+}
+
+/*
+ * The browser hides [hidden] with `display: none`, but that is a UA rule and ANY
+ * author rule setting `display` beats it — so an element given a layout mode by a
+ * class (`display: grid`, `display: flex`) stays on screen forever no matter what
+ * the script does to its `hidden` attribute. This makes the attribute mean what
+ * everyone already assumes it means.
+ */
+[hidden] {
+  display: none !important;
+}
+
+body {
+  margin: 0;
+  background: var(--surface-base);
+  color: var(--text-primary);
+  font: 14.5px/1.65 var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

@@ -1,0 +1,44 @@
+/* Button variants. `.btn-sm` is a size modifier and must stay last. */
+
+.btn {
+  border: 0;
+  border-radius: 9px;
+  padding: 11px 17px;
+  background: var(--accent);
+  color: var(--text-on-accent);
+  font: 700 13.5px var(--font-sans);
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+}
+.btn:hover {
+  filter: brightness(1.12);
+  transform: translateY(-1px);
+}
+.btn.light {
+  background: var(--success);
+  color: var(--text-on-accent);
+}
+.btn.secondary {
+  background: var(--accent-surface-hover);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+}
+.btn.ghost {
+  background: var(--surface-raised);
+  color: var(--accent);
+  border: 1px solid var(--border-strong);
+}
+.btn.ghost:hover {
+  background: var(--surface-hover);
+  border-color: var(--accent);
+}
+.btn.danger {
+  color: var(--danger);
+  background: var(--surface-hover);
+  border: 1px solid var(--danger-edge);
+}
+
+.btn-sm {
+  padding: 5px 11px;
+  font-size: 13px;
+}

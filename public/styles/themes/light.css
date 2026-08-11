@@ -1,0 +1,59 @@
+/*
+ * Theme: light (paper)
+ *
+ * A bundled theme is a flat restatement of the palette contract. It only needs
+ * the tokens it changes; anything omitted falls through to palette.css, and
+ * every derived token in semantic.css re-resolves on its own.
+ *
+ * Activate with: document.documentElement.dataset.theme = 'light'
+ */
+
+:root[data-theme='light'] {
+  color-scheme: light;
+
+  --surface-deep: #edeae1;
+  --surface-base: #f7f5ef;
+  --surface-raised: #ffffff;
+  --surface-sunken: #f1eee6;
+  --surface-hover: #e6e2d7;
+  --surface-active: #d9d4c6;
+  --surface-hover-subtle: #efece4;
+
+  --border: #d3cec0;
+  --border-strong: #b3ac9a;
+  --border-subtle: #e2ded2;
+  --border-input: #c4bdab;
+
+  --text-primary: #2a2a37;
+  --text-muted: #5c5a52;
+  --text-faint: #7c7a72;
+  --text-placeholder: #8f8d84;
+  --text-strong: #16161d;
+  --text-on-accent: #ffffff;
+  --text-code: #2f5f8f;
+  --text-code-muted: #4a5c78;
+
+  --accent: #4a7dc4;
+  --accent-strong: #3a68a8;
+  --accent-soft: #dbe6f6;
+  --accent-surface: #e3ecf8;
+  --accent-surface-hover: #cddef2;
+  --accent-surface-dim: #eef4fc;
+  --accent-border: #b3ccea;
+  --accent-gradient-end: #cfe0f4;
+
+  --success: #4f8a3d;
+  --success-strong: #5f9c4a;
+  --success-surface: #e7f2e1;
+  --success-border: #b9d6ac;
+  --success-deep: #dcecd4;
+  --warning: #a9762a;
+  --warning-strong: #c08c3c;
+  --danger: #c0392b;
+  --danger-surface: #f5dcd9;
+  --code: #2f6f3c;
+  --purple: #7a5ea3;
+  --teal: #3f7f76;
+
+  --shadow-color: #6d6858;
+}

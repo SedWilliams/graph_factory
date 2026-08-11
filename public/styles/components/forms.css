@@ -1,0 +1,142 @@
+/* Form controls, field scaffolding, inline notices, and native select menus. */
+
+label {
+  display: block;
+  font-weight: 700;
+  font-size: 14px;
+  margin-bottom: 7px;
+  color: var(--text-primary);
+}
+input,
+textarea,
+select {
+  width: 100%;
+  border: 1px solid var(--border-input);
+  background: var(--surface-sunken);
+  border-radius: 99px;
+  padding: 12px;
+  font: 14.5px/1.5 var(--font-sans);
+  color: var(--text-primary);
+  outline: none;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+input,
+select {
+  border-radius: 9px;
+}
+textarea {
+  border-radius: 9px;
+  resize: vertical;
+  min-height: 92px;
+}
+input::placeholder,
+textarea::placeholder {
+  color: var(--text-placeholder);
+}
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: var(--accent);
+  box-shadow: var(--focus-ring);
+}
+.field {
+  margin-bottom: 18px;
+}
+.field > small {
+  display: block;
+  margin-top: 7px;
+  color: var(--text-muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
+.actions {
+  display: flex;
+  gap: 9px;
+  align-items: center;
+  margin-top: 22px;
+}
+.notice {
+  padding: 13px 16px;
+  background: var(--surface-hover);
+  border: 1px solid var(--border-strong);
+  border-radius: 10px;
+  color: var(--warning);
+  margin: 16px 0;
+  font-size: 13.5px;
+  line-height: 1.55;
+}
+
+/* Segmented control used by the idea intake form. */
+.idea-mode-toggle {
+  display: inline-flex;
+  gap: 2px;
+  margin-bottom: 18px;
+  padding: 3px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface-base);
+}
+.idea-mode-toggle button {
+  border: 0;
+  border-radius: 6px;
+  padding: 8px 14px;
+  background: transparent;
+  color: var(--text-muted);
+  font: 600 13px var(--font-sans);
+  cursor: pointer;
+}
+.idea-mode-toggle button.active {
+  background: var(--surface-active);
+  color: var(--text-primary);
+}
+
+.intake-details {
+  margin: 4px 0 16px;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 99px;
+  background: var(--surface-base);
+}
+.intake-details summary {
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 13px;
+}
+.intake-details .field {
+  margin: 14px 0 0;
+}
+
+/* Native dropdowns. Option colours only take effect on some platforms. */
+select[multiple] {
+  min-height: 138px;
+  background: var(--surface-base);
+  color: var(--text-primary);
+}
+select optgroup {
+  background: var(--surface-base);
+  color: var(--text-muted);
+  font-weight: 700;
+}
+select option {
+  padding: 6px;
+  background: var(--surface-base);
+  color: var(--text-primary);
+}
+select option:disabled {
+  color: var(--text-muted);
+  background: var(--surface-base);
+  opacity: 0.6;
+}
+select option:hover {
+  background: var(--surface-active) linear-gradient(0deg, var(--surface-active), var(--surface-active));
+  color: var(--text-strong);
+}
+select option:focus,
+select option:active,
+select option:checked {
+  background: var(--accent-surface-hover) linear-gradient(0deg, var(--accent-surface-hover), var(--accent-surface-hover));
+  color: var(--text-strong);
+  font-weight: 700;
+}
