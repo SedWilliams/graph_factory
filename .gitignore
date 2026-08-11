@@ -2,3 +2,9 @@ node_modules
 GraphFactoryData
 output
 *.log
+
+# Screenshots and recordings. Generated locally by tools/capture-assets.mjs,
+# which is tracked — the images themselves are not.
+docs/assets/
+*.png
+*.gif

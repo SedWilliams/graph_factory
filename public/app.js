@@ -727,7 +727,6 @@ function drawNode(node, focus, errorNodes) {
   const x = node.x - width / 2;
   const y = node.y - NODE_HEIGHT / 2;
   const selected = selection?.kind === 'node' && selection.id === node.id;
-  const accent = themeColor(`--node-${model.type}`) || themeColor('--node-agent');
 
   ctx.globalAlpha = focus && !selected && focus !== node.id && !isNeighbour(focus, node.id) ? 0.4 : 1;
 
@@ -737,14 +736,6 @@ function drawNode(node, focus, errorNodes) {
   roundRect(x, y, width, NODE_HEIGHT, 10);
   ctx.fillStyle = themeColor('--surface-base');
   ctx.fill();
-
-  // A coloured spine rather than a coloured fill: the type stays legible at any
-  // zoom without the label having to fight the background for contrast.
-  ctx.save();
-  ctx.clip();
-  ctx.fillStyle = accent;
-  ctx.fillRect(x, y, 5, NODE_HEIGHT);
-  ctx.restore();
 
   ctx.strokeStyle = errorNodes.has(node.id) ? themeColor('--node-error') : selected ? themeColor('--node-selected') : themeColor('--border');
   ctx.lineWidth = (selected || errorNodes.has(node.id) ? 2 : 1) / view.scale;

@@ -1,37 +1,64 @@
+<div align="center">
+
 # Graph Factory
 
-Edit a graph. Get an agentic coding system your harness can actually run.
+**Build an AI coding workflow visually. Run it with the coding tool you already use.**
 
-You draw the pipeline — agents, tools, gates, branches, retry loops — and Graph
-Factory saves it as one YAML file, compiles that file into native config for Claude
-Code, Pi, opencode, or Codex, and can execute it directly against any of them.
+[![License: MIT](https://img.shields.io/badge/license-MIT-8eaeea.svg)](LICENSE)
+[![Node](https://img.shields.io/badge/node-%E2%89%A5%2020.11-a4ca77.svg)](https://nodejs.org)
+[![Dependencies](https://img.shields.io/badge/runtime%20deps-1-f0ce8e.svg)](package.json)
+
+</div>
+
+Graph Factory is a visual editor and command-line tool for AI coding workflows. Connect agents, tools, approval steps, branches, and retry loops to show how work should move from one step to the next.
+
+Graph Factory saves the workflow as one YAML file. You can run that file directly or turn it into native configuration for Claude Code, Pi, OpenCode, or Codex.
+
+Graph Factory calls these coding tools **harnesses**.
+
+## Quick start
+
+You need Node.js 20.11 or newer.
 
 ```bash
+git clone https://github.com/SedWilliams/graph_factory.git
+cd graph_factory
 npm install
-npm start          # editor on http://127.0.0.1:4180
+npm start
 ```
+
+The editor opens at <http://127.0.0.1:4180>.
+
+To use `graph-factory` from anywhere, link the CLI from the project root:
+
+```bash
+npm link
+```
+
+If you do not want to link it, replace `graph-factory` in any example with `node bin/graph-factory.mjs`.
 
 ---
 
-## Why a file, and why YAML
+## Why Graph Factory uses YAML
 
-The graph is the deliverable. It belongs in the repository it drives, next to the
-code it changes, in a format a reviewer can read in a pull request. Three candidates,
-weighed against what the file has to survive:
+The graph is the source of truth. It belongs beside the code it works with. That makes the workflow easy to review, version, and discuss in a pull request.
 
-| | verdict |
-|---|---|
-| **Markdown** | Reads beautifully, parses ambiguously. A graph is a set of typed edges, and there is no way to write an edge list in prose that two tools will agree on. Kept as a *generated* document, never as the source. |
-| **JSON** | Parses unambiguously, edits badly. Every prompt in this format is multi-line, and JSON has no multi-line string — a prompt becomes one line of `\n` escapes that nobody can review in a diff. Kept as lossless interchange. |
-| **YAML** | Parses unambiguously *and* block scalars keep prompts readable. It is also what every one of these harnesses already speaks. **Canonical.** |
+Graph Factory considered three file formats:
 
-Emission is deterministic — fixed key order, prompts always as literal blocks — so
-two saves of the same graph produce byte-identical files.
+| Format       | Trade-off                                                                         | How Graph Factory uses it     |
+| ------------ | --------------------------------------------------------------------------------- | ----------------------------- |
+| **Markdown** | Easy for people to read, but too ambiguous for typed nodes and edges.             | Generated documentation only. |
+| **JSON**     | Precise, but multi-line prompts become hard-to-read strings full of `\n` escapes. | Lossless data exchange.       |
+| **YAML**     | Precise and readable, with block strings for multi-line prompts.                  | The main file format.         |
+
+Graph Factory always writes YAML keys in the same order and stores prompts as literal blocks. Saving the same graph twice produces identical files, which keeps diffs clean.
+
+Here is a complete graph with one builder and one reviewer:
 
 ```yaml
 version: 1
-id: review-until-clean
-name: Review until clean
+id: build-and-review
+name: Build and review
 defaults:
   model: claude-opus-5
   harness: claude
@@ -45,98 +72,125 @@ nodes:
     tools: [read, write, edit, bash]
     output: work
     prompt: |-
-      Implement the following. If review feedback is present, address every point.
+      Complete this task:
 
-      Task: {{inputs.task}}
-      Feedback: {{review}}
-  - id: verdict
-    type: router
-    expression: review
+      {{inputs.task}}
+  - id: reviewer
+    type: agent
+    tools: [read, bash]
+    output: review
+    prompt: |-
+      Review this work:
+
+      {{work}}
+  - id: done
+    type: end
+    output: review
 edges:
   - from: builder
     to: reviewer
-  - from: verdict
-    to: shipped
-    type: branch
-    when: contains(review, "APPROVED")
-  - from: verdict
-    to: builder
-    type: feedback
+    type: handoff
+  - from: reviewer
+    to: done
 ```
 
-## The model
+## How a graph works
 
-**Eight node types.** `start` · `agent` (an LLM turn) · `tool` (a shell command or
-MCP call, no model) · `gate` (stop and ask a human) · `router` (branch on a
-condition) · `parallel` (fan out and join) · `loop` (repeat with a cap) · `end`.
+A graph contains **nodes** and **edges**. Nodes do the work. Edges decide what happens next.
 
-**Five edge types.** `flow` runs the target next. `branch` runs it only when a
-condition holds. `handoff` delegates carrying context. `feedback` is the only edge
-allowed to close a cycle — that is what makes a retry loop legal and an accidental
-cycle an error. `uses` is not control flow at all: it binds a tool to the agent
-permitted to call it, and becomes a tool allow-list at compile time.
+### Node types
 
-**References, not expressions.** A prompt may name a value (`{{inputs.task}}`,
-`{{plan}}`) but never compute one. That is deliberate: it lets the validator prove
-every reference resolves *before* a run starts, and it means a compiled bundle
-carries no semantics the target harness would have to reimplement.
+| Node       | What it does                                                                 |
+| ---------- | ---------------------------------------------------------------------------- |
+| `start`    | Starts the workflow and makes its inputs available.                          |
+| `agent`    | Sends one prompt to an AI model.                                             |
+| `tool`     | Runs a shell command or MCP tool without calling a model.                    |
+| `gate`     | Pauses and asks a person to approve or reject the next step.                 |
+| `router`   | Chooses a path by checking conditions.                                       |
+| `parallel` | Starts several paths at once, then joins their results.                      |
+| `loop`     | Repeats part of the workflow until a condition is met or a limit is reached. |
+| `end`      | Finishes the workflow and names its final output.                            |
+
+### Edge types
+
+| Edge       | What it does                                                                            |
+| ---------- | --------------------------------------------------------------------------------------- |
+| `flow`     | Runs the next node.                                                                     |
+| `branch`   | Runs the next node only when its condition matches.                                     |
+| `handoff`  | Passes work and context to another agent.                                               |
+| `feedback` | Sends work back for another attempt. This is the only edge that may close a cycle.      |
+| `uses`     | Gives an agent permission to use a tool. It does not control the order of the workflow. |
+
+Prompts can insert existing values with references such as `{{inputs.task}}` or `{{plan}}`. They cannot contain calculations.
+
+This limit lets Graph Factory check every reference before a run begins. It also means compiled files do not depend on a separate expression engine.
 
 ## Validation
 
-Errors block compilation; warnings do not. The split matters — a warning is usually
-a graph mid-edit, an error is a graph no harness can run.
+Run validation before compiling or running a graph:
 
-Errors include: a step with no instructions, a cycle with no feedback edge, an edge
-pointing at a node that does not exist, a `uses` edge that is not agent→tool, a loop
-with neither an exit condition nor a cap, and — the one that catches the most real
-bugs — a prompt reading a value produced by a node that does not run first.
+```bash
+graph-factory validate review.agentgraph.yaml
+```
 
-## Compiling
+**Errors stop the graph.** They mean no supported harness can run it safely.
+
+Errors include:
+
+- a step with no instructions;
+- an edge that points to a missing node;
+- a `uses` edge that does not connect an agent to a tool;
+- a cycle that does not use a `feedback` edge;
+- a loop with no exit condition or iteration limit;
+- a prompt that reads a value before another node creates it.
+
+**Warnings do not stop the graph.** They usually point to unfinished or surprising parts of a graph that is still being edited.
+
+## Compiling a graph
+
+Compile a graph to create the files expected by a specific harness:
 
 ```bash
 graph-factory compile review.agentgraph.yaml --target claude --out .
 ```
 
-Every harness gets its agents natively. None of them can express a router or a
-feedback loop in config, so each bundle also carries the control flow as an explicit
-ordered instruction sheet for the orchestrating agent.
+Each target receives native agent definitions. Because harness configuration files cannot represent every router or retry loop, the bundle also includes an ordered guide for the orchestrating agent.
 
-- **claude** — `.claude/agents/*.md` subagents plus a `/graph-id` slash command.
-- **pi** — agent files, a real executable entry in `agent-chain.yaml`, and a team.
-  The chain covers the linear spine; anything it cannot hold is listed by name.
-- **opencode** — agents and a command in `opencode.json`, with tool permissions
-  written out explicitly (a withheld tool is `false`, not merely absent).
-- **codex** — `AGENTS.md`, `config.toml` profiles whose sandbox matches what each
-  agent may do, prompt files, and a shell runner.
-- **portable** — the canonical YAML, a Markdown doc with a Mermaid diagram, and
-  `run.json`: a resolved execution manifest that loses nothing.
+- **Claude Code (`claude`)** — creates `.claude/agents/*.md` subagents and a `/graph-id` slash command.
+- **Pi (`pi`)** — creates agent files, a team, and an executable entry in `agent-chain.yaml`. The bundle clearly lists any graph steps that the chain cannot represent.
+- **OpenCode (`opencode`)** — adds agents and a command to `opencode.json`. Tool permissions are explicit, including tools that are not allowed.
+- **Codex (`codex`)** — creates `AGENTS.md`, sandboxed `config.toml` profiles, prompt files, and a shell runner.
+- **Portable (`portable`)** — includes the original YAML, Markdown documentation with a Mermaid diagram, and a complete `run.json` execution plan.
 
-Each compiler reports what it had to give up. Codex will say that it is going to
-serialise your parallel node, because Codex has one agent.
+The compiler reports any target limitations instead of silently dropping behavior. For example, Codex runs parallel work in sequence because it has one agent.
 
-## Running
+**Export** lets you preview every generated file before anything is written.
+
+## Running a graph
+
+Run a graph directly with a harness:
 
 ```bash
 graph-factory run review.agentgraph.yaml --harness claude --input task="…"
-graph-factory run review.agentgraph.yaml --input task="…"      # dry run
 ```
 
-A dry run renders every prompt and prints the exact command line that would be
-executed, without calling a model — the cheapest way to see what a graph will
-actually send.
+Leave out `--harness` for a dry run:
 
-Execution is token passing over edges: every edge is pending, taken, or skipped, and
-a node runs once all of its incoming edges resolve with at least one taken. That one
-rule gives branching, joining, and dead-branch elimination, and lets independent
-nodes run genuinely concurrently. A feedback edge additionally *rewinds* the body it
-points into, so the loop can run again while everything outside it keeps its state.
-
-Gates block. In the CLI they wait on stdin (`--yes` opts out for CI); in the editor
-the run parks and shows an approve/reject card.
-
-## CLI
-
+```bash
+graph-factory run review.agentgraph.yaml --input task="…"
 ```
+
+A dry run renders every prompt and prints the exact commands without calling a model. It is the fastest and cheapest way to check what the graph will send.
+
+During a run, each node waits for its incoming paths to be resolved. It runs when at least one path reaches it. Unselected branches are skipped, and independent nodes can run at the same time.
+
+A `feedback` edge resets only the part of the graph that needs another attempt. Results from the rest of the graph stay available.
+
+A `gate` pauses the run. In the CLI, it waits for input in the terminal. Use `--yes` to approve gates automatically in CI. In the editor, it shows an approve or reject card.
+
+## CLI reference
+
+```text
 graph-factory validate <file>
 graph-factory compile  <file> --target <name> [--out <dir>]
 graph-factory run      <file> [--harness <name>] [--input k=v]... [--yes]
@@ -145,32 +199,44 @@ graph-factory new      <template> [--out <file>]
 graph-factory serve    [--port 4180]
 ```
 
-## The editor
+## Using the editor
 
-Pick a type from the palette and click to place it. Shift-drag between nodes to
-connect them, or drag from the handle on a node's right edge. Select anything to edit
-it; `Delete` removes it. Node positions are saved into the file, so a graph reopens
-exactly as you left it — the force simulation only touches nodes you have not placed
-yourself.
+1. Choose a node type from the palette, then click the canvas to place it.
+2. Connect nodes by holding Shift while dragging, or drag from the handle on a node's right edge.
+3. Select a node or edge to edit it.
+4. Press `Delete` to remove the selected item.
 
-The status pill is live validation, the strip beneath the canvas lists every issue
-and jumps to the node responsible, and **Export** previews the full compiled bundle
-for any target before a single file is written.
+Graph Factory saves node positions in the YAML file. When you reopen a graph, placed nodes stay where you left them. Automatic layout only moves nodes that you have not positioned yourself.
 
-## Layout
+The editor also provides:
 
-```
-bin/graph-factory.mjs   CLI
-src/graph/              schema · normalize · validate · topology · template · serialize
-src/compile/            one module per target, plus the shared plan/narrative
-src/run/                executor · conditions · adapters · run store
+- a status pill that updates as you edit;
+- an issue list that jumps to the node causing each problem;
+- an **Export** preview that shows every generated file before writing it;
+- light and midnight themes, available from the toggle in the top-left corner.
+
+## Project layout
+
+```text
+bin/graph-factory.mjs   command-line interface
+src/graph/              schema, normalization, validation, topology, templates, and serialization
+src/compile/            target compilers and shared execution plans
+src/run/                executor, conditions, harness adapters, and run storage
 src/server.mjs          zero-dependency node:http API
-public/                 the editor
+public/                 visual editor
+tools/                  README screenshot tools
 ```
 
-Graphs live in `GraphFactoryData/graphs/` (override with `GRAPH_FACTORY_HOME`). The
-server binds to loopback only: the run endpoints execute agent CLIs with write access
-to the working directory, so this is a local developer tool by construction.
+By default, the editor stores graphs in `GraphFactoryData/graphs/`. Set `GRAPH_FACTORY_HOME` to use a different location.
 
-One runtime dependency (`yaml`). `npm test` runs 55 tests over the schema, validator,
-executor, and all five compilers.
+The server listens only on the local machine. Its run endpoints can start coding tools with write access to the working directory, so Graph Factory is intentionally a local developer tool.
+
+The project has one runtime dependency: `yaml`. Run `npm test` to execute 55 tests covering the schema, validator, executor, and all five compilers.
+
+## Contributing
+
+Issues and pull requests are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for setup instructions, project rules, and screenshot generation steps.
+
+## License
+
+[MIT](LICENSE) © SedWilliams
